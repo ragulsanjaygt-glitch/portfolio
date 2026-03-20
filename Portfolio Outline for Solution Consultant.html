@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio — Solution Consultant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0b0d12;
+      --bg2: #10131a;
+      --surface: #161b26;
+      --border: rgba(255,255,255,0.07);
+      --accent: #c8a96e;
+      --accent-soft: rgba(200,169,110,0.12);
+      --text: #e8e6e0;
+      --text-muted: #7a7e8a;
+      --text-dim: #4a4e5a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 60px;
+      background: linear-gradient(to bottom, rgba(11,13,18,0.95), transparent);
+      backdrop-filter: blur(2px);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 60px 80px;
+      position: relative;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hero-label {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 8vw, 96px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.35s forwards;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(18px, 2.5vw, 26px);
+      font-weight: 300;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.5s forwards;
+    }
+
+    .hero-about {
+      max-width: 560px;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.85;
+      margin-bottom: 52px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.65s forwards;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 4px;
+      transition: color 0.3s, gap 0.3s;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.8s forwards;
+    }
+
+    .hero-cta:hover { color: var(--accent); gap: 18px; }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      right: 60px;
+      writing-mode: vertical-rl;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeIn 1s ease 1.2s forwards;
+    }
+
+    .hero-scroll::after {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 120px 60px;
+      position: relative;
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 56px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .section-tag::before {
+      content: '';
+      width: 30px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--bg2); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .about-left .section-heading { margin-bottom: 28px; }
+
+    .about-text {
+      color: var(--text-muted);
+      line-height: 1.9;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .about-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      margin-top: 56px;
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--text);
+    }
+
+    /* ── SKILLS ── */
+    #skills { background: var(--bg); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 16px;
+    }
+
+    .skill-card {
+      background: var(--bg);
+      padding: 44px 40px;
+      transition: background 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.4s ease;
+    }
+
+    .skill-card:hover { background: var(--surface); }
+    .skill-card:hover::before { height: 100%; }
+
+    .skill-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 24px;
+      transition: color 0.4s;
+    }
+
+    .skill-card:hover .skill-number { color: var(--accent-soft); }
+
+    .skill-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 12px;
+      letter-spacing: 0.01em;
+    }
+
+    .skill-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--bg2); }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 60px;
+      padding: 52px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .exp-item:first-of-type { border-top: 1px solid var(--border); }
+
+    .exp-period {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding-top: 6px;
+    }
+
+    .exp-company {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 300;
+      margin-bottom: 6px;
+    }
+
+    .exp-role {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .exp-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.85;
+      max-width: 560px;
+    }
+
+    /* ── PROJECTS ── */
+    #projects { background: var(--bg); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 16px;
+    }
+
+    .project-card {
+      background: var(--bg);
+      padding: 40px 36px;
+      transition: background 0.35s;
+      cursor: default;
+    }
+
+    .project-card:hover { background: var(--surface); }
+
+    .project-industry {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .project-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 400;
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── EDUCATION ── */
+    #education { background: var(--bg2); }
+
+    .edu-list { margin-top: 8px; }
+
+    .edu-item {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 60px;
+      padding: 48px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .edu-item:first-of-type { border-top: 1px solid var(--border); }
+
+    .edu-year {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding-top: 6px;
+    }
+
+    .edu-institution {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 300;
+      margin-bottom: 6px;
+    }
+
+    .edu-degree {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .edu-detail {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--bg);
+      text-align: center;
+      padding: 140px 60px;
+    }
+
+    #contact .section-tag { justify-content: center; }
+    #contact .section-tag::before { display: none; }
+
+    #contact .section-heading {
+      font-size: clamp(44px, 7vw, 82px);
+      margin-bottom: 28px;
+    }
+
+    #contact p {
+      color: var(--text-muted);
+      max-width: 440px;
+      margin: 0 auto 52px;
+      line-height: 1.85;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      padding: 16px 40px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .contact-link:hover {
+      background: var(--text);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 60px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+    }
+
+    footer span { color: var(--accent); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 24px 28px; }
+      .nav-links { gap: 24px; }
+
+      section, #hero { padding: 80px 28px; }
+      #contact { padding: 100px 28px; }
+      footer { padding: 28px; flex-direction: column; gap: 12px; text-align: center; }
+
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .exp-item, .edu-item { grid-template-columns: 1fr; gap: 12px; }
+      .hero-scroll { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">S<span>.</span>C</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner">
+      <p class="hero-label">Solution Consultant · Zoho Corporation</p>
+      <h1 class="hero-name">Crafting Solutions<br>that <em>Actually</em> Work.</h1>
+      <p class="hero-title">Low Code / No Code Specialist &amp; Digital Business Strategist</p>
+      <p class="hero-about">
+        I bridge the gap between business challenges and technology — designing and delivering
+        scalable Low Code / No Code solutions for enterprises across industries, from healthcare
+        to manufacturing to retail. Currently deepening my business acumen at IIM Bangalore.
+      </p>
+      <a href="#projects" class="hero-cta">View My Work →</a>
+    </div>
+    <p class="hero-scroll">Scroll</p>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-inner">
+      <p class="section-tag reveal">About Me</p>
+      <div class="about-grid">
+        <div class="about-left reveal">
+          <h2 class="section-heading">A consultant who thinks in systems.</h2>
+          <p class="about-text">
+            I'm a Solution Consultant at Zoho Corporation, where I work with businesses to unlock
+            the full potential of technology — without the overhead of traditional development.
+            My approach is rooted in understanding the why before the how.
+          </p>
+          <p class="about-text">
+            From initial discovery to final delivery, I take ownership of every stage of a project.
+            I believe the best solutions are the ones that people actually use — intuitive, lean,
+            and built for the real world.
+          </p>
+          <p class="about-text">
+            Currently pursuing a BBA in Digital Business Engineering at IIM Bangalore, furthering
+            my understanding of how technology strategy intersects with business growth.
+          </p>
+        </div>
+        <div class="about-stats reveal">
+          <div class="stat-item">
+            <span class="stat-label">Current Role</span>
+            <span class="stat-value">Solution Consultant</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Organisation</span>
+            <span class="stat-value">Zoho Corporation</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Specialisation</span>
+            <span class="stat-value">LC / NC Platforms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Industries Served</span>
+            <span class="stat-value">Multiple Verticals</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Currently Studying</span>
+            <span class="stat-value">BBA DBE · IIM Bangalore</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-inner">
+      <p class="section-tag reveal">Core Competencies</p>
+      <h2 class="section-heading reveal">What I bring<br>to the table.</h2>
+      <div class="skills-grid reveal">
+        <div class="skill-card">
+          <div class="skill-number">01</div>
+          <div class="skill-name">Communication</div>
+          <p class="skill-desc">Translating complex technical concepts into clear, compelling narratives for stakeholders at every level — from C-suite to end users.</p>
+        </div>
+        <div class="skill-card">
+          <div class="skill-number">02</div>
+          <div class="skill-name">Project Delivery</div>
+          <p class="skill-desc">End-to-end ownership of solution delivery — scoping, planning, executing, and closing projects on time with measurable outcomes.</p>
+        </div>
+        <div class="skill-card">
+          <div class="skill-number">03</div>
+          <div class="skill-name">Solution Designing</div>
+          <p class="skill-desc">Architecting Low Code / No Code solutions tailored to unique business processes, ensuring scalability, usability, and alignment to goals.</p>
+        </div>
+        <div class="skill-card">
+          <div class="skill-number">04</div>
+          <div class="skill-name">Consulting</div>
+          <p class="skill-desc">Strategic advisory that goes beyond implementation — identifying gaps, recommending improvements, and guiding clients toward long-term digital maturity.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-inner">
+      <p class="section-tag reveal">Experience</p>
+      <h2 class="section-heading reveal">Where I've made<br>an impact.</h2>
+      <div class="exp-item reveal">
+        <div class="exp-period">Present</div>
+        <div>
+          <div class="exp-company">Zoho Corporation</div>
+          <div class="exp-role">Solution Consultant</div>
+          <p class="exp-desc">
+            Delivering end-to-end Low Code / No Code projects for enterprise customers across
+            multiple industries. Responsible for requirement gathering, solution architecture,
+            implementation oversight, and client relationship management. Consistently delivering
+            projects that automate workflows, reduce manual effort, and drive measurable ROI.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-inner">
+      <p class="section-tag reveal">Selected Projects</p>
+      <h2 class="section-heading reveal">Delivered across<br>industries.</h2>
+      <div class="projects-grid reveal">
+        <div class="project-card">
+          <div class="project-industry">Manufacturing</div>
+          <div class="project-title">Operations Workflow Automation</div>
+          <p class="project-desc">Designed and deployed a LC/NC solution to automate multi-stage approval workflows, reducing processing time significantly and eliminating manual bottlenecks.</p>
+        </div>
+        <div class="project-card">
+          <div class="project-industry">Retail</div>
+          <div class="project-title">Customer Relationship Platform</div>
+          <p class="project-desc">Built a unified CRM and customer engagement solution enabling the client to manage leads, track orders, and improve service delivery at scale.</p>
+        </div>
+        <div class="project-card">
+          <div class="project-industry">Healthcare</div>
+          <div class="project-title">Patient Data Management System</div>
+          <p class="project-desc">Delivered a compliant, intuitive data management system using no-code tools, replacing legacy spreadsheet processes and improving team efficiency.</p>
+        </div>
+        <div class="project-card">
+          <div class="project-industry">Finance</div>
+          <div class="project-title">Reporting & Analytics Dashboard</div>
+          <p class="project-desc">Consulted and implemented a real-time business intelligence dashboard giving leadership instant visibility into KPIs and operational metrics.</p>
+        </div>
+        <div class="project-card">
+          <div class="project-industry">Logistics</div>
+          <div class="project-title">Inventory & Supply Chain App</div>
+          <p class="project-desc">Architected a low-code application to track inventory movements, automate reordering triggers, and integrate with existing ERP systems.</p>
+        </div>
+        <div class="project-card">
+          <div class="project-industry">Education</div>
+          <div class="project-title">Student Onboarding Portal</div>
+          <p class="project-desc">Designed a no-code student onboarding and tracking portal, streamlining admission workflows and reducing administrative overhead for the institution.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-inner">
+      <p class="section-tag reveal">Education</p>
+      <h2 class="section-heading reveal">Academic<br>foundations.</h2>
+      <div class="edu-list">
+        <div class="edu-item reveal">
+          <div class="edu-year">Ongoing</div>
+          <div>
+            <div class="edu-institution">IIM Bangalore</div>
+            <div class="edu-degree">BBA in Digital Business Engineering (DBE)</div>
+            <p class="edu-detail">Studying the intersection of technology strategy, business design, and digital transformation at one of India's premier management institutions.</p>
+          </div>
+        </div>
+        <div class="edu-item reveal">
+          <div class="edu-year">Completed</div>
+          <div>
+            <div class="edu-institution">Madurai, Tamil Nadu</div>
+            <div class="edu-degree">Secondary & Higher Secondary Education</div>
+            <p class="edu-detail">Completed schooling in Madurai, building a strong academic foundation before entering the professional world of technology consulting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-inner">
+      <p class="section-tag reveal">Get In Touch</p>
+      <h2 class="section-heading reveal">Let's build<br>something <em style="font-style:italic;color:var(--accent)">great.</em></h2>
+      <p class="reveal">Have a project in mind or want to discuss how Low Code / No Code solutions can transform your business? I'd love to connect.</p>
+      <a href="mailto:hello@example.com" class="contact-link reveal">Send a Message</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 · Solution Consultant at <span>Zoho Corporation</span></p>
+    <p>Designed with intention · Built with care</p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Stagger children in grids
+    document.querySelectorAll('.skills-grid, .projects-grid').forEach(grid => {
+      const children = grid.querySelectorAll('.skill-card, .project-card');
+      children.forEach((child, i) => {
+        child.style.transitionDelay = `${i * 80}ms`;
+      });
+    });
+  </script>
+</body>
+</html>
